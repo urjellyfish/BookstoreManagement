@@ -38,9 +38,11 @@ public class BookstoreManagement {
     }
 
     public void deleteBook(String name) {
-        for (Book book : books) {
+        Iterator<Book> iterator = books.iterator();
+        while (iterator.hasNext()) {
+            Book book = iterator.next();
             if (book.getName().equals(name)) {
-                books.remove(book);
+                iterator.remove();
                 System.out.println("Book deleted successfully.");
                 return;
             }
@@ -95,8 +97,11 @@ public class BookstoreManagement {
         Scanner scanner = new Scanner(System.in);
         String filename = "bookstore.dat";
 
+        // Load data from file on startup
+        bookstore.loadDataFromFile(filename);
+
         while (true) {
-            System.out.println("\nBookstore Management System");
+            System.out.println("\n__________Bookstore Management System__________");
             System.out.println("1. Add Author");
             System.out.println("2. Add Book");
             System.out.println("3. Update Book");
@@ -105,7 +110,6 @@ public class BookstoreManagement {
             System.out.println("6. List Books");
             System.out.println("7. List Authors");
             System.out.println("8. Store Data to File");
-            System.out.println("9. Load Data from File");
             System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
@@ -123,8 +127,20 @@ public class BookstoreManagement {
                 case 2:
                     System.out.print("Enter book name: ");
                     String bookName = scanner.nextLine();
-                    System.out.print("Enter book price: ");
-                    double bookPrice = scanner.nextDouble();
+                    double bookPrice = -1;
+                    while (true) {
+                        try {
+                            System.out.print("Enter book price: ");
+                            bookPrice = Double.parseDouble(scanner.nextLine());
+                            if (bookPrice < 0) {
+                                System.out.println("Price cannot be negative. Please enter a non-negative value.");
+                                continue;
+                            }
+                            break;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input. Please enter a numeric value for the price.");
+                        }
+                    }
                     System.out.print("Enter author ID: ");
                     int bookAuthorId = scanner.nextInt();
                     scanner.nextLine();  // Consume newline
@@ -135,8 +151,20 @@ public class BookstoreManagement {
                     String oldName = scanner.nextLine();
                     System.out.print("Enter new book name: ");
                     String newName = scanner.nextLine();
-                    System.out.print("Enter new book price: ");
-                    double newPrice = scanner.nextDouble();
+                    double newPrice = -1;
+                    while (true) {
+                        try {
+                            System.out.print("Enter new book price: ");
+                            newPrice = Double.parseDouble(scanner.nextLine());
+                            if (newPrice < 0) {
+                                System.out.println("Price cannot be negative. Please enter a non-negative value.");
+                                continue;
+                            }
+                            break;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input. Please enter a numeric value for the price.");
+                        }
+                    }
                     System.out.print("Enter new author ID: ");
                     int newAuthorId = scanner.nextInt();
                     scanner.nextLine();  // Consume newline
@@ -160,9 +188,6 @@ public class BookstoreManagement {
                     break;
                 case 8:
                     bookstore.storeDataToFile(filename);
-                    break;
-                case 9:
-                    bookstore.loadDataFromFile(filename);
                     break;
                 case 0:
                     System.out.println("Exiting...");
